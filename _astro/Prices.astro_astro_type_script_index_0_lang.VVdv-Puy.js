@@ -1,0 +1,1 @@
+import{t as e}from"./goal.RFGx6IQz.js";var t=document.getElementById(`ceny`);if(t&&`IntersectionObserver`in window){let n=new IntersectionObserver(t=>{t.some(e=>e.isIntersecting)&&(e(`prices`),n.disconnect())},{rootMargin:`0px 0px -40% 0px`});n.observe(t)}
