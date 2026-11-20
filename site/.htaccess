@@ -1,0 +1,36 @@
+# Apache на виртуальном хостинге (Timeweb): https и адрес без www, своя страница 404, без списков файлов, сжатие и кэш.
+ErrorDocument 404 /404.html
+Options -Indexes
+
+# Перенаправления по документации Timeweb (типовые перенаправления): nginx перед Apache
+# ставит заголовок X-HTTPS: 1 на запросах по https. Сертификат Let's Encrypt на alyans-dance.ru и www с 18.11.2026.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteCond %{HTTP_HOST} ^www\.alyans-dance\.ru$ [NC]
+  RewriteRule ^(.*)$ https://alyans-dance.ru/$1 [R=301,L]
+  RewriteCond %{HTTP:X-HTTPS} !1
+  RewriteCond %{HTTP_HOST} ^alyans-dance\.ru$ [NC]
+  RewriteRule ^(.*)$ https://alyans-dance.ru/$1 [R=301,L]
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/xml application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType image/webp "access plus 1 month"
+  ExpiresByType image/jpeg "access plus 1 month"
+  ExpiresByType image/png "access plus 1 month"
+  ExpiresByType image/svg+xml "access plus 1 month"
+  ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+# Файлы в /_astro/ с хэшем в имени, их можно кэшировать надолго
+<IfModule mod_headers.c>
+  <FilesMatch "\.(js|css|woff2|webp|avif|jpg|png|svg)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
